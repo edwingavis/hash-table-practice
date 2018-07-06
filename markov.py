@@ -23,6 +23,7 @@ def main():
     print ("Probability Speaker A: " + str(log_probA))
     print ("Probability Speaker B: " + str(log_probB))
 
+
 class Markov:
 
     def __init__(self,k,s):
