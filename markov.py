@@ -1,6 +1,5 @@
 # CS Practice: Markov models and hash tables
 # Edwin Gavis  
-# Thanks to Anne Rogers
 
 import sys
 import math
@@ -11,19 +10,12 @@ HASH_CELLS = 57
 class Markov:
 
     def __init__(self,k,s):
-        '''
-        Construct a new k-order Markov model using the statistics of string "s"
-        '''
         self.k = k
         self.uniques = len(set(s))
         self.counts = Hash_Table.Hash_Table(HASH_CELLS, 0)
         self.fill_counts(s)
 
     def fill_counts(self,s):
-        '''
-        Add in the counts for each each k ("key") and k-1 ("stem") letter 
-        combination in "s"
-        '''
         for i in range(len(s)):
             key, stem = self.get_key_stem(s,i)
             current_count = self.counts.lookup(key)
@@ -32,36 +24,25 @@ class Markov:
             self.counts.update(stem, stem_count + 1)
 
     def get_key_stem(self,s,i):
-        '''
-        Return the three and two letter keys corresponding to an index "i" 
-        in string "s" 
-        '''
         rv = str()
         for k_th in reversed(range(self.k + 1)):
             rv += s[i - k_th]
         return rv, rv[:-1]
 
     def log_probability(self,s):
-        '''
-        Get the log probability of string "s", given the statistics of
-        character sequences modeled by this particular Markov model
-        This probability is *not* normalized by the length of the string.
-        '''
         rv = 0
         for i in range(len(s)):
             rv += self.get_log_prob(s, i)
         return rv
 
     def get_log_prob(self,s,i):
-        '''
-        Calculate the log probability of the character in string "s" at index "i"
-        '''
         key, stem = self.get_key_stem(s,i)
         key_count = self.counts.lookup(key)
         stem_count = self.counts.lookup(stem)
         return math.log((1 + key_count) / (stem_count + self.uniques))
 
 
+#following contributed by Matthew Wachs
 def identify_speaker(speech1, speech2, speech3, order):
     '''
     Given sample text from two speakers, and text from an unidentified speaker,
@@ -96,7 +77,6 @@ def print_results(res_tuple):
 
 
 if __name__=="__main__":
-    #following by Anne Rogers
     num_args = len(sys.argv)
 
     if num_args != 5:
