@@ -1,11 +1,27 @@
 # CS Practice: Markov models and hash tables
 # Edwin Gavis  
+# Special thanks to Matthew Wachs
 
 import sys
 import math
 import Hash_Table
 
 HASH_CELLS = 57
+ORDER = 2
+
+def main():
+    with open("speechA.txt", "rU") as f1:
+        a_speech = f1.read()
+    with open("speechB.txt", "rU") as f2:
+        b_speech = f2.read()
+    with open("speechX.txt", "rU") as f3:
+        unknown = f3.read()
+    modelA = Markov(ORDER, a_speech)
+    modelB = Markov(ORDER, b_speech)
+    log_probA = modelA.log_probability(unknown) / len(unknown)
+    log_probB = modelB.log_probability(unknown) / len(unknown)
+    print ("Probability Speaker A: " + str(log_probA))
+    print ("Probability Speaker B: " + str(log_probB))
 
 class Markov:
 
@@ -42,60 +58,5 @@ class Markov:
         return math.log((1 + key_count) / (stem_count + self.uniques))
 
 
-#following contributed by Matthew Wachs
-def identify_speaker(speech1, speech2, speech3, order):
-    '''
-    Given sample text from two speakers, and text from an unidentified speaker,
-    return a tuple with the *normalized* log probabilities of each of the speakers
-    uttering that text under a "order" order character-based Markov model,
-    and a conclusion of which speaker uttered the unidentified text
-    based on the two probabilities.
-    '''
-    modelA = Markov(order, speech1)
-    modelB = Markov(order, speech2)
-    log_probA = modelA.log_probability(speech3) / len(speech3)
-    log_probB = modelB.log_probability(speech3) / len(speech3)
-    if log_probA > log_probB:
-        conclusion = "A"
-    else:
-        conclusion = "B"
-    return (log_probA, log_probB, conclusion)
-
-
-def print_results(res_tuple):
-    '''
-    Given a tuple from identify_speaker, print formatted results to the screen
-    '''
-    (likelihood1, likelihood2, conclusion) = res_tuple
-    
-    print("Speaker A: " + str(likelihood1))
-    print("Speaker B: " + str(likelihood2))
-
-    print("")
-
-    print("Conclusion: Speaker " + conclusion + " is most likely")
-
-
 if __name__=="__main__":
-    num_args = len(sys.argv)
-
-    if num_args != 5:
-        print("usage: python3 " + sys.argv[0] + " <file name for speaker A> " +
-              "<flie name for speaker B>\n  <file name of text to identify> " +
-              "<order>")
-        sys.exit(0)
-    
-    with open(sys.argv[1], "rU") as file1:
-        speech1 = file1.read()
-
-    with open(sys.argv[2], "rU") as file2:
-        speech2 = file2.read()
-
-    with open(sys.argv[3], "rU") as file3:
-        speech3 = file3.read()
-
-    res_tuple = identify_speaker(speech1, speech2, speech3, int(sys.argv[4]))
-
-    print_results(res_tuple)
-
-
+    main()
